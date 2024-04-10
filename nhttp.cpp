@@ -1,6 +1,8 @@
 #include <nhttp.h>
 #include <default_id.h>
 #include <cstdlib.h>
+#include <nwc24.h>
+#include <setting.h>
 
 namespace demae {
     __attribute__((__section__(".wii_id_http"))) int HttpGet(nhttp::NHTTPContext* ctx, char* url, bool is_https)
@@ -33,6 +35,13 @@ namespace demae {
         return 0;
       }
 
+      // Quick clz
+      auto clz = [](int num){
+          int result;
+          asm ("cntlzw %0, %1" : "=r" (result) : "r" (num));
+          return result;
+      };
+
       // We don't use HTTPS, otherwise it would be hooked here.
       // Get the user's Wii ID
       int console_id{};
@@ -41,11 +50,31 @@ namespace demae {
       char str[20];
       cstdlib::sprintf(str, "%d", console_id);
 
-      // TODO: Check for error
-      nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiID", str);
+      int res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiID", str);
+      if (clz(res) >> 5 == 0)
+        return 0;
+
+      // Now for the user's friend code. Function signature doesn't take a u64, rather an array of u32's.
+      u32 friend_code[2];
+      nwc24::NWC24GetMyUserId(friend_code);
+
+      char friend_code_buffer[20];
+      nwc24::NWC24iConvIdToStr(*friend_code, friend_code[1], friend_code_buffer);
+
+      res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiFriendCode", friend_code_buffer);
+      if (clz(res) >> 5 == 0)
+        return 0;
+
+      // Finally the serial number.
+      char serial_number[10];
+      sc::GetSCLabel("SERNO", serial_number, 10);
+
+      res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiSerial", serial_number);
+      if (clz(res) >> 5 == 0)
+        return 0;
 
       nhttp::NHTTPSetProxy(ctx->connection);
-      int res = nhttp::NHTTPStartConnection(ctx->connection);
+      res = nhttp::NHTTPStartConnection(ctx->connection);
       if (res == 0xe)
       {
         res = nhttp::NHTTPCheckConnection(ctx->connection);
