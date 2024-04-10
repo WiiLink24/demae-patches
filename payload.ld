@@ -19,6 +19,7 @@ SECTIONS
         KEEP(*(.wii_id_http))
         _G_WiiIDHttpEnd = .;
 
+        . = ALIGN(4);
 		*(.text*)
 		*(.rodata*)
 		*(.data*)

@@ -4,10 +4,10 @@ namespace demae {
     /*
     * DefaultIDCheck checks if the ID is the default Dolphin ID.
     */
-    __attribute__((__section__(".id_check"))) void DefaultIDCheck() {
+    SECTION(".id_check") void DefaultIDCheck() {
       ESInit();
 
-      int console_id{};
+      u32 console_id{};
       ES_GetDeviceId(&console_id);
       if (console_id == DEFAULT_DOLPHIN_ID)
         PPCHalt();

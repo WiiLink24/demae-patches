@@ -6,7 +6,7 @@
 #include <rvl.h>
 
 namespace demae {
-    __attribute__((__section__(".wii_id_http"))) int HttpGet(nhttp::NHTTPContext* ctx, char* url, bool is_https)
+    SECTION(".wii_id_http") int HttpGet(nhttp::NHTTPContext* ctx, char* url, bool is_https)
     {
       if (ctx->some_memory != nullptr)
       {
@@ -46,10 +46,11 @@ namespace demae {
 
       // We don't use HTTPS, otherwise it would be hooked here.
       // Get the user's Wii ID
-      int console_id{};
+      u32 console_id{};
       ES_GetDeviceId(&console_id);
 
-      char str[20];
+      // Max length is 10 characters, length of (2^31) + null terminator
+      char str[11];
       cstdlib::sprintf(str, "%d", console_id);
 
       int res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiID", str);
@@ -60,14 +61,14 @@ namespace demae {
       u32 friend_code[2];
       nwc24::NWC24GetMyUserId(friend_code);
 
-      char friend_code_buffer[20];
+      char friend_code_buffer[17];
       nwc24::NWC24iConvIdToStr(*friend_code, friend_code[1], friend_code_buffer);
 
       res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiFriendCode", friend_code_buffer);
       if (clz(res) >> 5 == 0)
         return 0;
 
-      // Finally the serial number.
+      // Finally the serial number. 9 + null terminator
       char serial_number[10];
       sc::GetSCLabel("SERNO", serial_number, 10);
 
