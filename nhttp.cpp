@@ -3,6 +3,7 @@
 #include <cstdlib.h>
 #include <nwc24.h>
 #include <setting.h>
+#include <rvl.h>
 
 namespace demae {
     __attribute__((__section__(".wii_id_http"))) int HttpGet(nhttp::NHTTPContext* ctx, char* url, bool is_https)
@@ -31,7 +32,8 @@ namespace demae {
       if (ctx->connection == nullptr)
       {
         ctx->fail = -1;
-        // OSReport
+        // failed NHTTPCcreateConnection
+        rvl::OSReport(reinterpret_cast<const char*>(0x802d64e8));
         return 0;
       }
 
@@ -82,7 +84,8 @@ namespace demae {
       }
       else if (res < 0)
       {
-        // OSReport
+        // failed NHTTPStartConnection : %d
+        rvl::OSReport(reinterpret_cast<const char*>(0x802d64e8), res);
         nhttp::NHTTPDeleteConnection(ctx->connection);
         ctx->connection = nullptr;
       }
