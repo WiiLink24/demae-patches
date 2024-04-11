@@ -3,9 +3,10 @@
 #include <cstdlib.h>
 #include <setting.h>
 #include <rvl.h>
+#include <patch.h>
 
 namespace demae {
-    SECTION(".wii_id_http") int HttpGet(nhttp::NHTTPContext* ctx, char* url, bool is_https)
+    int HttpGet(nhttp::NHTTPContext* ctx, char* url, bool is_https)
     {
       if (ctx->some_memory != nullptr)
       {
@@ -32,7 +33,7 @@ namespace demae {
       {
         ctx->fail = -1;
         // failed NHTTPCcreateConnection
-        rvl::OSReport(reinterpret_cast<const char*>(0x802d64e8));
+        RVL::OSReport(reinterpret_cast<const char*>(0x802d64e8));
         return 0;
       }
 
@@ -53,7 +54,7 @@ namespace demae {
       cstdlib::sprintf(str, "%d", console_id);
 
       int res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiID", str);
-      if (clz(res))
+      if (clz(res) >> 5 == 0)
         return 0;
 
       // Finally the serial number. 9 + null terminator
@@ -61,13 +62,13 @@ namespace demae {
       sc::GetSCLabel("SERNO", serial_number, 10);
 
       res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiSerial", serial_number);
-      if (clz(res))
+      if (clz(res) >> 5 == 0)
         return 0;
 
       char country_code[4];
-      cstdlib::sprintf(country_code, "%d", sc::GetCountryLanguage());
+      cstdlib::sprintf(country_code, "%d", sc::GetCountry());
       res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiCountryCode", country_code);
-      if (clz(res))
+      if (clz(res) >> 5 == 0)
         return 0;
 
       nhttp::NHTTPSetProxy(ctx->connection);
@@ -80,14 +81,14 @@ namespace demae {
       else if (res < 0)
       {
         // failed NHTTPStartConnection : %d
-        rvl::OSReport(reinterpret_cast<const char*>(0x802d64e8), res);
+        RVL::OSReport(reinterpret_cast<const char*>(0x802d64e8), res);
         nhttp::NHTTPDeleteConnection(ctx->connection);
         ctx->connection = nullptr;
       }
 
       if (ctx->response != nullptr)
       {
-        freeMem(ctx->response);
+        cstdlib::freeMem(ctx->response);
         ctx->response = nullptr;
       }
 
@@ -101,4 +102,8 @@ namespace demae {
 
       return 1;
     }
+
+    DEMAE_DEFINE_PATCH = {
+            Patch::MakePatch(0x8002c42c, HttpGet)
+    };
 }

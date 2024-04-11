@@ -6,7 +6,7 @@ typedef int (*func)();
 
 namespace nhttp {
     // It is extremely important to note that I don't know if any of these field names are correct except for connection.
-    struct __attribute__((packed)) NHTTPContext {
+    struct PACKED NHTTPContext {
         u8 unknown[8];
         int* connection;
         void* some_memory;
@@ -36,5 +36,3 @@ namespace nhttp {
 
     LONGCALL int NHTTPCheckConnection(int* nhttp_connection) AT(0x80247460);
 }
-
-LONGCALL void freeMem(void* ptr) AT(0x80025be8);

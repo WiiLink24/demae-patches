@@ -8,10 +8,15 @@ namespace sc {
 
     LONGCALL void FindByteArrayItem(void* buffer, int offset, size_t size) AT(0x80236f24);
 
-    u32 GetCountryLanguage() {
+    LONGCALL u8 GetLanguage() AT(0x80237b1c);
+
+    u32 GetCountry() {
       void* ptr = cstdlib::malloc(0x1009);
 
       FindByteArrayItem(ptr, 0x1008,0x10);
-      return *reinterpret_cast<u32*>(ptr) >> 0x18;
+      u32 val = *reinterpret_cast<u32*>(ptr);
+
+      cstdlib::freeMem(ptr);
+      return val >> 0x18;
     }
 }

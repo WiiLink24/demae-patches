@@ -11,15 +11,13 @@ SECTIONS
 {
 	.text : {
         . = ALIGN(4);
-        _G_IDCheckStart = .;
-        KEEP(*(.id_check))
-        _G_IDCheckEnd = .;
-
-        _G_WiiIDHttpStart = .;
-        KEEP(*(.wii_id_http))
-        _G_WiiIDHttpEnd = .;
+        KEEP(*(.apply_patches))
 
         . = ALIGN(4);
+        _G_DemaePatchStart = .;
+        KEEP(*(.demae_patch))
+        _G_DemaePatchEnd = .;
+
 		*(.text*)
 		*(.rodata*)
 		*(.data*)
