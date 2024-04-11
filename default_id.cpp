@@ -35,7 +35,7 @@ namespace demae {
 
       u32 console_id{};
       ES_GetDeviceId(&console_id);
-      if (console_id == DEFAULT_DOLPHIN_ID)
+      if (console_id == 80442645)
       {
         u8 language_code = sc::GetLanguage();
         RVL::OSWritePanic(reinterpret_cast<void*>(0x804725a0), reinterpret_cast<void*>(0x80474580), error_message[language_code]);
@@ -43,7 +43,7 @@ namespace demae {
     }
 
     DEMAE_DEFINE_PATCH = {
-            Patch::MakePatch(0x80233298, DefaultIDCheck)
+            Patch::MakePatch(0x801baf64, DefaultIDCheck)
     };
 }
 
