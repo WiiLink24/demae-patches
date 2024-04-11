@@ -1,7 +1,6 @@
 #include <nhttp.h>
 #include <default_id.h>
 #include <cstdlib.h>
-#include <nwc24.h>
 #include <setting.h>
 #include <rvl.h>
 
@@ -57,22 +56,17 @@ namespace demae {
       if (clz(res) >> 5 == 0)
         return 0;
 
-      // Now for the user's friend code. Function signature doesn't take a u64, rather an array of u32's.
-      u32 friend_code[2];
-      nwc24::NWC24GetMyUserId(friend_code);
-
-      char friend_code_buffer[17];
-      nwc24::NWC24iConvIdToStr(*friend_code, friend_code[1], friend_code_buffer);
-
-      res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiFriendCode", friend_code_buffer);
-      if (clz(res) >> 5 == 0)
-        return 0;
-
       // Finally the serial number. 9 + null terminator
       char serial_number[10];
       sc::GetSCLabel("SERNO", serial_number, 10);
 
       res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiSerial", serial_number);
+      if (clz(res) >> 5 == 0)
+        return 0;
+
+      char country_code[4];
+      cstdlib::sprintf(country_code, "%d", sc::GetCountryLanguage());
+      res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiCountryCode", country_code);
       if (clz(res) >> 5 == 0)
         return 0;
 
