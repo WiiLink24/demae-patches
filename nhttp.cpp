@@ -53,7 +53,7 @@ namespace demae {
       cstdlib::sprintf(str, "%d", console_id);
 
       int res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiID", str);
-      if (clz(res) >> 5 == 0)
+      if (clz(res))
         return 0;
 
       // Finally the serial number. 9 + null terminator
@@ -61,13 +61,13 @@ namespace demae {
       sc::GetSCLabel("SERNO", serial_number, 10);
 
       res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiSerial", serial_number);
-      if (clz(res) >> 5 == 0)
+      if (clz(res))
         return 0;
 
       char country_code[4];
       cstdlib::sprintf(country_code, "%d", sc::GetCountryLanguage());
       res = nhttp::NHTTPAddHeaderField(ctx->connection, "X-WiiCountryCode", country_code);
-      if (clz(res) >> 5 == 0)
+      if (clz(res))
         return 0;
 
       nhttp::NHTTPSetProxy(ctx->connection);
