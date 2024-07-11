@@ -1,27 +1,47 @@
-#include <patch.h>
-#include <util.h>
-#include <rvl.h>
 #include <algorithm>
+#include <cstdlib.h>
+#include <patch.h>
+#include <rvl.h>
+#include <util.h>
 
 namespace demae::Patch {
-    extern patch PatchStart asm("_G_DemaePatchStart");
-    extern patch PatchEnd asm("_G_DemaePatchEnd");
+extern patch PatchStart asm("_G_DemaePatchStart");
+extern patch PatchEnd asm("_G_DemaePatchEnd");
 
-    SECTION(".apply_patches") void ApplyPatches() {
-      u32 patch_count = std::distance(&PatchStart, &PatchEnd);
-      for (u32 i = 0; i < patch_count; i++) {
-        ApplyPatch((&PatchStart)[i]);
-      }
-    }
-
-    void ApplyPatch(patch& patch) {
-      u32* address = reinterpret_cast<u32*>(patch.address);
-
-      u32 baseArg = patch.arg & 0x80000000 ? patch.arg : 0x80476150 + patch.arg;
-
-      // Calculate call (bl) value
-      *address = 0x48000001 | ((baseArg - patch.address) & 0x3FFFFFC);
-      RVL::DCFlushRange(address, sizeof(u32));
-      RVL::ICInvalidateRange(address, sizeof(u32));
-    }
+SECTION(".apply_patches") void ApplyPatches() {
+  u32 patch_count = std::distance(&PatchStart, &PatchEnd);
+  for (u32 i = 0; i < patch_count; i++) {
+    ApplyPatch((&PatchStart)[i]);
+  }
 }
+
+void ApplyPatch(patch &patch) {
+  u32 *address = reinterpret_cast<u32 *>(patch.address);
+
+  u32 baseArg0 = patch.arg0 & 0x80000000 ? patch.arg0 : 0x80001800 + patch.arg0;
+  u32 *arg0Ptr = reinterpret_cast<u32 *>(baseArg0);
+  u32 flush_size{};
+
+  switch (patch.patch_type) {
+  case WRITE:
+    // Write directly to memory
+    cstdlib::memcpy(address, arg0Ptr, patch.arg1);
+    flush_size = patch.arg1;
+    break;
+
+  case WRITE_U32:
+    *address = patch.arg0;
+    flush_size = sizeof(u32);
+    break;
+
+  case FUNCTION_CALL:
+    // Calculate call (bl) value
+    *address = 0x48000001 | ((baseArg0 - patch.address) & 0x3FFFFFC);
+    flush_size = sizeof(u32);
+    break;
+  }
+
+  RVL::DCFlushRange(address, flush_size);
+  RVL::ICInvalidateRange(address, flush_size);
+}
+} // namespace demae::Patch

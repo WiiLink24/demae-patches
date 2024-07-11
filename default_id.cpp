@@ -1,49 +1,55 @@
-#include <default_id.h>
-#include <rvl.h>
+#include <es.h>
+#include <nwc24.h>
 #include <patch.h>
+#include <rvl.h>
 #include <setting.h>
 
 namespace demae {
-    constexpr const char* error_message[7] = {
-            // Japanese
-            "Japan",
+constexpr const char *error_message[7] = {
+    // Japanese
+    "Japan",
 
-            // English
-            "Please use a NAND dump from a real console.\nFor instructions on how to dump your NAND, visit \nhttps://wii.hacks.guide/bootmii.",
+    // English
+    "Please use a NAND dump from a real console.\nFor instructions on how to "
+    "dump your NAND, visit \nhttps://wii.hacks.guide/bootmii.",
 
-            // German
-            "German",
+    // German
+    "German",
 
-            // French
-            "c'est ne pas bon",
+    // French
+    "n'est pas bon",
 
-            // Spanish
-            "Spanish",
+    // Spanish
+    "Spanish",
 
-            // Italian
-            "Italy",
+    // Italian
+    "Italy",
 
-            // Dutch
-            "Dutch"
-    };
+    // Dutch
+    "Dutch"};
 
-    /*
-    * DefaultIDCheck checks if the ID is the default Dolphin ID.
-    */
-    void DefaultIDCheck() {
-      ESInit();
+/*
+ * DefaultIDCheck checks if the ID is the default Dolphin ID.
+ * If it is, it displays a message telling the user to dump their NAND.
+ */
+void DefaultIDCheck() {
+  es::ESInit();
 
-      u32 console_id{};
-      ES_GetDeviceId(&console_id);
-      if (console_id == 80442645)
-      {
-        u8 language_code = sc::GetLanguage();
-        RVL::OSWritePanic(reinterpret_cast<void*>(0x804725a0), reinterpret_cast<void*>(0x80474580), error_message[language_code]);
-      }
-    }
+  u32 console_id{};
+  es::ES_GetDeviceId(&console_id);
 
-    DEMAE_DEFINE_PATCH = {
-            Patch::MakePatch(0x801baf64, DefaultIDCheck)
-    };
+  if (console_id == DEFAULT_DOLPHIN_ID) {
+    u8 language_code = sc::GetLanguage();
+    RVL::OSWritePanic(reinterpret_cast<void *>(0x804725a0),
+                      reinterpret_cast<void *>(0x80474580),
+                      error_message[language_code]);
+  }
+
+  // If we are good, copy the Wii Number into an area we can use for later.
+  u64 friend_code{};
+  nwc24::NWC24GetMyUserId(&friend_code);
+  nwc24::NWC24iConvIDToStr(friend_code, reinterpret_cast<char *>(0x800017F0));
 }
 
+DEMAE_DEFINE_PATCH = {Patch::WriteFunctionCall(0x801baf64, DefaultIDCheck)};
+} // namespace demae
