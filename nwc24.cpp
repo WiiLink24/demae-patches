@@ -3,10 +3,11 @@
 #include <patch.h>
 #include <personal_data.h>
 #include <util.h>
+#include <setting.h>
 
 namespace demae {
 constexpr char msg[] = "Order successfully placed.\nTo track your order, click "
-                       "this link.\nhttp://tracker.wiilink24.com?phone=%s";
+                       "this link.\nhttp://tracker.wiilink24.com?phone=%s&country=%s";
 
 /*
  * SetCustomMessageBoardText sets the order confirmation message to one where you can track
@@ -27,9 +28,16 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
   PersonalData::Utf16ToUtf8(buffer, 256, info_block->phone_number, 256);
   PersonalData::MovePhoneNumber(&pd, buffer);
 
+  // Get the country string.
+  char *country_code = static_cast<char *>(cstdlib::malloc(4));
+  if (sc::GetCountry() == 18)
+    cstdlib::sprintf(country_code, "ca");
+  else
+    cstdlib::sprintf(country_code, "us");
+
   // Now copy it into the target string.
-  char *msg_buffer = reinterpret_cast<char *>(cstdlib::malloc(128));
-  cstdlib::sprintf(msg_buffer, msg, pd.phone_number);
+  char *msg_buffer = reinterpret_cast<char *>(cstdlib::malloc(160));
+  cstdlib::sprintf(msg_buffer, msg, pd.phone_number, country_code);
 
   // Finally, convert to UTF16 and send to the SetMsg function.
   u32 size = cstdlib::strlen(msg_buffer);
