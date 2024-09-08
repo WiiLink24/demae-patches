@@ -44,7 +44,7 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
   void *dst = cstdlib::malloc((size + 1) * 2);
   ShiftJISToUTF(dst, &size, const_cast<char *>(msg_buffer), &size);
   // Null terminator
-  *(reinterpret_cast<u16 *>(dst) + size) = 0;
+  *(reinterpret_cast<u16 *>(dst) + size) = L'\0';
 
   return nwc24::NWC24SetMsgText(ctx, static_cast<const char *>(dst),
                                 (size + 1) * 2, one, two);
