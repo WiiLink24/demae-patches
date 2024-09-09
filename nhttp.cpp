@@ -14,7 +14,7 @@ namespace demae {
 int AlterHTTPGETHeaders(int* connection, const char* key, const char* value) {
   // Add Wii Number
   int res = nhttp::NHTTPAddHeaderField(connection, key, value);
-  if (!res)
+  if (res != 0)
     return 0;
 
   // Attempt and load personal data
@@ -26,12 +26,12 @@ int AlterHTTPGETHeaders(int* connection, const char* key, const char* value) {
   if (pd.address != nullptr) {
     res =
         nhttp::NHTTPAddHeaderField(connection, "X-Address", pd.address);
-    if (!res)
+    if (res != 0)
       return 0;
 
     res = nhttp::NHTTPAddHeaderField(connection, "X-PostalCode",
                                      pd.postal_code);
-    if (!res)
+    if (res != 0)
       return 0;
   }
 
@@ -47,7 +47,7 @@ int AlterHTTPGETHeaders(int* connection, const char* key, const char* value) {
  */
 int AlterPOSTRequestHeaders(int* connection, const char* key, const char* value) {
   int res = nhttp::NHTTPAddHeaderField(connection, key, value);
-  if (!res)
+  if (res != 0)
     return res;
 
   // Add country code
