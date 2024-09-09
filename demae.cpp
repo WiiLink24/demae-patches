@@ -1,4 +1,5 @@
 #include <default_id.cpp>
+#include <error.cpp>
 #include <localization.cpp>
 #include <nhttp.cpp>
 #include <nwc24.cpp>
