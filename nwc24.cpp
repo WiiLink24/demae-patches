@@ -15,9 +15,6 @@ constexpr char msg[] = "Order successfully placed.\nTo track your order, click "
  */
 int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
                               int one, int two) {
-  LONGCALL void ShiftJISToUTF(void *dst, u32 *size, char *src, u32 *_size)
-      AT(0x801f5db0);
-
   // Get phone number for the tracker URL
   auto *info_block = reinterpret_cast<PersonalData::InfoBlock *>(
       *reinterpret_cast<u32 *>(0x8038a598));
@@ -28,23 +25,19 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
   PersonalData::Utf16ToUtf8(buffer, 256, info_block->phone_number, 256);
   PersonalData::MovePhoneNumber(&pd, buffer);
 
-  // Get the country string.
-  char *country_code = static_cast<char *>(cstdlib::malloc(4));
-  if (sc::GetCountry() == 18)
-    cstdlib::sprintf(country_code, "ca");
-  else
-    cstdlib::sprintf(country_code, "us");
-
-  // Now copy it into the target string.
+  // Get the country string then copy the full string
   char *msg_buffer = reinterpret_cast<char *>(cstdlib::malloc(160));
-  cstdlib::sprintf(msg_buffer, msg, pd.phone_number, country_code);
+  if (sc::GetCountry() == 18)
+    cstdlib::sprintf(msg_buffer, msg, pd.phone_number, "ca");
+  else
+    cstdlib::sprintf(msg_buffer, msg, pd.phone_number, "us");
 
   // Finally, convert to UTF16 and send to the SetMsg function.
   u32 size = cstdlib::strlen(msg_buffer);
   void *dst = cstdlib::malloc((size + 1) * 2);
-  ShiftJISToUTF(dst, &size, const_cast<char *>(msg_buffer), &size);
+  ShiftJISToUTF(dst, &size, msg_buffer, &size);
   // Null terminator
-  *(reinterpret_cast<u16 *>(dst) + size) = L'\0';
+  *(reinterpret_cast<wchar_t *>(dst) + size) = L'\0';
 
   return nwc24::NWC24SetMsgText(ctx, static_cast<const char *>(dst),
                                 (size + 1) * 2, one, two);
