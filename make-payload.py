@@ -46,7 +46,7 @@ def build(_edition):
             new.write(patch.read())
             new.write(b'\x00' * (6144 - os.stat(binary_path).st_size))
 
-    subprocess.run(["binary/DolTranslator", f"binary/00000001_{_edition}.app", "binary/binary-en.json", "0x804758b4"]).check_returncode()
+    subprocess.run(["binary/DolTranslator", f"binary/00000001_{_edition}.app", "binary/binary-en.json", "0x80475d80"]).check_returncode()
     os.rename("translated.dol", f"binary/00000001_{_edition}.app")
 
 
