@@ -3,6 +3,10 @@
 #include <rvl.h>
 #include <setting.h>
 
+#if DOMINOS
+#include <patch.h>
+#endif
+
 namespace demae {
 constexpr const char *error_message[7] = {
     // Japanese

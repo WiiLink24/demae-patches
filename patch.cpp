@@ -47,7 +47,7 @@ void ApplyPatch(patch &patch) {
 
     address[0] = 0x3C000000 | (baseArg0 >> 16) | (patch.arg1 << 21);
     address[1] = 0x60000000 | (baseArg0 & 0xFFFF) | (patch.arg1 << 21) |
-            (patch.arg1 << 16);
+                 (patch.arg1 << 16);
     address[2] = 0x7C0903A6 | (patch.arg1 << 21);
     address[3] = 0x4E800421;
     flush_size = sizeof(u32) * 4;

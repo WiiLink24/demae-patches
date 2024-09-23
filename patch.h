@@ -1,7 +1,7 @@
 #pragma once
 
-#include <util.h>
 #include <asm.h>
+#include <util.h>
 
 extern "C" {
 enum PatchType { FUNCTION_CALL, WRITE, WRITE_U32, BRANCH_CTR_LINK };
@@ -54,12 +54,12 @@ constexpr patch WriteU32(u32 address, u32 value) {
 }
 
 constexpr patch CallWithCTR(u32 address, auto function, u32 tempReg = r12) {
-      return patch {
-              .address = address,
-              .patch_type = BRANCH_CTR_LINK,
-              .arg0 = u32(+function),
-              .arg1 = tempReg,
-      };
+  return patch{
+      .address = address,
+      .patch_type = BRANCH_CTR_LINK,
+      .arg0 = u32(+function),
+      .arg1 = tempReg,
+  };
 }
 
 #define _DEMAE_DEFINE_PATCH2(NUM)                                              \

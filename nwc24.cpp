@@ -2,16 +2,17 @@
 #include <nwc24.h>
 #include <patch.h>
 #include <personal_data.h>
-#include <util.h>
 #include <setting.h>
+#include <util.h>
 
 namespace demae {
-constexpr char msg[] = "Order successfully placed.\nTo track your order, click "
-                       "this link.\nhttp://tracker.wiilink24.com?phone=%s&country=%s";
+constexpr char msg[] =
+    "Order successfully placed.\nTo track your order, click "
+    "this link.\nhttp://tracker.wiilink24.com?phone=%s&country=%s";
 
 /*
- * SetCustomMessageBoardText sets the order confirmation message to one where you can track
- * your order straight from the Wii Internet Channel.
+ * SetCustomMessageBoardText sets the order confirmation message to one where
+ * you can track your order straight from the Wii Internet Channel.
  */
 int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
                               int one, int two) {

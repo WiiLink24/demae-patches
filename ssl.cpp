@@ -3,10 +3,10 @@
 #include <ssl.h>
 
 namespace demae::NHTTP {
-    /*
-     * NHTTPi_SocSSLConnect overwrite the original SSL connect function with one that loads our custom root CA.
-     *
-     */
+/*
+ * NHTTPi_SocSSLConnect overwrite the original SSL connect function with one
+ * that loads our custom root CA.
+ */
 s32 NHTTPi_SocSSLConnect(nhttp::Self *self, void *param_2,
                          nhttp::Request *request, void *socket) {
   request->ssl_ctx = nhttp::SSLNew(request->options, request->hostname);
