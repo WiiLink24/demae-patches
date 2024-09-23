@@ -39,6 +39,19 @@ void ApplyPatch(patch &patch) {
     *address = 0x48000001 | ((baseArg0 - patch.address) & 0x3FFFFFC);
     flush_size = sizeof(u32);
     break;
+
+  case BRANCH_CTR_LINK:
+    if (patch.arg1 > 31) {
+      return;
+    }
+
+    address[0] = 0x3C000000 | (baseArg0 >> 16) | (patch.arg1 << 21);
+    address[1] = 0x60000000 | (baseArg0 & 0xFFFF) | (patch.arg1 << 21) |
+            (patch.arg1 << 16);
+    address[2] = 0x7C0903A6 | (patch.arg1 << 21);
+    address[3] = 0x4E800421;
+    flush_size = sizeof(u32) * 4;
+    break;
   }
 
   RVL::DCFlushRange(address, flush_size);
