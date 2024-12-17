@@ -17,5 +17,15 @@ namespace demae::Time {
             // Giant Switch-Case
             Patch::WriteFunctionCall(0x800aa874, FixTime),
             Patch::WriteFunctionCall(0x800aa884, FixTime),
+
+            // The channel wants the user to select the time from (waiting_time + 10) minutes after the current time.
+            // Dominos wants an hour + the interval (15). We can just do waiting time + an hour and be fine.
+            Patch::WriteASM(0x8008caa4, 1, ASM_LAMBDA(
+                      li r5, 60;
+                    )),
+
+            Patch::WriteASM(0x8008cfe0, 1, ASM_LAMBDA(
+                    li r5, 60;
+            ))
     };
 }
