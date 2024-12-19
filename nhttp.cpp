@@ -32,6 +32,12 @@ int AlterHTTPGETHeaders(int *connection, const char *key, const char *value) {
         nhttp::NHTTPAddHeaderField(connection, "X-PostalCode", pd.postal_code);
     if (res != 0)
       return 0;
+
+    if (cstdlib::strlen(pd.apartment_number) != 0) {
+      res = nhttp::NHTTPAddHeaderField(connection, "X-AptNumber", pd.apartment_number);
+      if (res != 0)
+        return 0;
+    }
   }
 
   // Now country code

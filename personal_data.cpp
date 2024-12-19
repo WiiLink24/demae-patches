@@ -17,5 +17,8 @@ void LoadPersonalData(PersonalData *pd) {
 
   Utf16ToUtf8(buffer, 256, info_block->postal_code, 256);
   MovePostalCode(pd, buffer);
+
+  Utf16ToUtf8(buffer, 256, info_block->apartment_number, 256);
+  MoveApartmentNumber(pd, buffer);
 }
 } // namespace demae::PersonalData
