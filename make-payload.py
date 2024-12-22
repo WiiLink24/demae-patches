@@ -11,7 +11,7 @@ path_cert = "wiilinkca.pub"
 extra_build_flags = []
 
 editions = ["REGULAR", "DOMINOS"]
-dev = True
+dev = False
 beta = False
 
 

@@ -2,7 +2,7 @@
 
 #include <util.h>
 
-constexpr u32 DEFAULT_DOLPHIN_ID = 0x2463b87c;
+constexpr u32 DEFAULT_DOLPHIN_ID = 0x0403AC68;
 
 namespace es {
 LONGCALL int ESInit() AT(0x801f9ec0);
