@@ -8,7 +8,7 @@
 namespace demae {
 constexpr char msg[] =
     "Order successfully placed.\nTo track your order, click "
-    "this link.\nhttp://tracker.wiilink24.com?phone=%s&country=%s";
+    "this link.\nhttp://tracker.wiilink24.com?phone=%ls&country=%s";
 
 /*
  * SetCustomMessageBoardText sets the order confirmation message to one where
@@ -21,17 +21,12 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
       *reinterpret_cast<u32 *>(0x8038a598));
   char *buffer = reinterpret_cast<char *>(cstdlib::malloc(256));
 
-  // Move phone number into the region it needs to be in
-  PersonalData::PersonalData pd{};
-  PersonalData::Utf16ToUtf8(buffer, 256, info_block->phone_number, 256);
-  PersonalData::MovePhoneNumber(&pd, buffer);
-
   // Get the country string then copy the full string
   char *msg_buffer = reinterpret_cast<char *>(cstdlib::malloc(160));
   if (sc::GetCountry() == 18)
-    cstdlib::sprintf(msg_buffer, msg, pd.phone_number, "ca");
+    cstdlib::sprintf(msg_buffer, msg, info_block->phone_number, "ca");
   else
-    cstdlib::sprintf(msg_buffer, msg, pd.phone_number, "us");
+    cstdlib::sprintf(msg_buffer, msg, info_block->phone_number, "us");
 
   // Finally, convert to UTF16 and send to the SetMsg function.
   u32 size = cstdlib::strlen(msg_buffer);
