@@ -4,8 +4,6 @@
 #include <rvl.h>
 
 namespace demae::Error {
-// TODO: It is probably way better make a GXObj class and include the function
-// like that
 typedef void func(int, u32, int);
 
 constexpr u32 ERROR_STRING_ADDRESS = 0x800014a0;

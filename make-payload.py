@@ -11,7 +11,8 @@ path_cert = "wiilinkca.pub"
 extra_build_flags = []
 
 editions = ["REGULAR", "DOMINOS"]
-debug = True
+dev = True
+beta = False
 
 
 def compile_ssl_cert():
@@ -29,8 +30,11 @@ def build(_edition):
               "-Wl,--gc-sections", "-Wno-address-of-packed-member", f"-D{_edition}", "-Wno-unused-variable"]
     flags += extra_build_flags
 
-    if debug:
-        flags.append("-DDEBUG")
+    # Prioritize development
+    if dev:
+        flags.append("-DDEV")
+    elif beta:
+        flags.append("-DBETA")
 
     out_path = os.path.join("build", f"demae_{_edition}")
     binary_path = os.path.join("binary", f"payload.demae_{_edition}.bin")
@@ -46,7 +50,11 @@ def build(_edition):
             new.write(patch.read())
             new.write(b'\x00' * (6144 - os.stat(binary_path).st_size))
 
-    subprocess.run(["binary/DolTranslator", f"binary/00000001_{_edition}.app", "binary/binary-en.json", "0x80475d80"]).check_returncode()
+            if patch.tell() > 0x1800:
+                print(f"WARNING: Payload larger than allowed size: {patch.tell()}")
+
+    (subprocess.run(["binary/DolTranslator", f"binary/00000001_{_edition}.app", "binary/binary-en.json", "0x80475d80"])
+     .check_returncode())
     os.rename("translated.dol", f"binary/00000001_{_edition}.app")
 
 
