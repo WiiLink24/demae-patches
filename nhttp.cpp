@@ -56,6 +56,19 @@ int AlterPOSTRequestHeaders(int *connection, const char *key,
   if (res != 0)
     return res;
 
+#if EATER
+  PersonalData::PersonalData pd{};
+  PersonalData::LoadPersonalData(&pd);
+
+  res = nhttp::NHTTPAddHeaderField(connection, "X-Address", pd.address);
+  if (res != 0)
+    return 0;
+
+  res = nhttp::NHTTPAddHeaderField(connection, "X-PostalCode", pd.postal_code);
+  if (res != 0)
+    return 0;
+#endif
+
   // Add country code
   char *country_code = static_cast<char *>(cstdlib::malloc(4));
   cstdlib::sprintf(country_code, "%d", sc::GetCountry());

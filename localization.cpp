@@ -99,6 +99,14 @@ DEMAE_DEFINE_PATCH = {
     Patch::WriteString(0x802d643d, "dom.wiilink24.com/itemimg/\0"),
     Patch::WriteString(0x802d647b, "dom.wiilink24.com/logoimg2/\0\0"),
     Patch::WriteString(0x802d64c1, "dom.wiilink24.com/nwapi.php\0\0"),
+#elif EATER
+    Patch::WriteString(0x802d63c7, "eater.wiilink.ca/nwapi.php?action=\0\0\0"),
+    Patch::WriteString(0x802d643d, "eater.wiilink.ca/itemimg/\0\0"),
+    Patch::WriteString(0x802d647b, "eater.wiilink.ca/logoimg2/\0\0\0"),
+    Patch::WriteString(0x802d64c1, "eater.wiilink.ca/nwapi.php\0\0\0"),
+
+    // TODO: Generate cert
+    Patch::WriteString(0x802d63b6, "http://\0"),
 #elif REGULAR
     Patch::WriteString(0x802d63c7, "food.wiilink24.com/nwapi.php?action=\0"),
     Patch::WriteString(0x802d643d, "food.wiilink24.com/itemimg/"),

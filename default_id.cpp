@@ -2,7 +2,7 @@
 #include <nwc24.h>
 #include <rvl.h>
 
-#if DOMINOS
+#if DOMINOS || EATER
 #include <patch.h>
 #endif
 
@@ -33,7 +33,7 @@ void DefaultIDCheck() {
   nwc24::NWC24GetMyUserId(&friend_code);
   nwc24::NWC24iConvIDToStr(friend_code, reinterpret_cast<char *>(0x800017F0));
 }
-#if DOMINOS
+#if DOMINOS || EATER
 DEMAE_DEFINE_PATCH = {Patch::WriteFunctionCall(0x801baf64, DefaultIDCheck)};
 #endif
 } // namespace demae

@@ -10,8 +10,8 @@ path_cert = "wiilinkca.pub"
 
 extra_build_flags = []
 
-editions = ["REGULAR", "DOMINOS"]
-dev = False
+editions = ["REGULAR", "DOMINOS", "EATER"]
+dev = True
 beta = False
 
 
@@ -51,7 +51,7 @@ def build(_edition):
             new.write(b'\x00' * (6144 - os.stat(binary_path).st_size))
 
             if patch.tell() > 0x1800:
-                print(f"WARNING: Payload larger than allowed size: {patch.tell()}")
+                print(f"WARNING: Payload larger than allowed size: {patch.tell()}\nVersion: {_edition}")
 
     (subprocess.run(["binary/DolTranslator", f"binary/00000001_{_edition}.app", "binary/binary-en.json", "0x80475d80"])
      .check_returncode())

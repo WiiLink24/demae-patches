@@ -19,7 +19,6 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
   // Get phone number for the tracker URL
   auto *info_block = reinterpret_cast<PersonalData::InfoBlock *>(
       *reinterpret_cast<u32 *>(0x8038a598));
-  char *buffer = reinterpret_cast<char *>(cstdlib::malloc(256));
 
   // Get the country string then copy the full string
   char *msg_buffer = reinterpret_cast<char *>(cstdlib::malloc(160));
