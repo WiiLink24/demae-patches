@@ -1,13 +1,10 @@
 #include <es.h>
 #include <nwc24.h>
 #include <rvl.h>
-
-#if DOMINOS || EATER
 #include <patch.h>
-#endif
 
 namespace demae {
-constexpr const char error_message[] = "Please use a NAND dump from a real console.\nFor instructions on how to dump your NAND, visit \nhttps://wii.hacks.guide/bootmii.";
+constexpr char error_message[] = "Please use a NAND dump from a real console.\nFor instructions on how to dump your NAND, visit \nhttps://wii.hacks.guide/bootmii.";
 
 /*
  * DefaultIDCheck checks if the ID is the default Dolphin ID.
@@ -33,7 +30,5 @@ void DefaultIDCheck() {
   nwc24::NWC24GetMyUserId(&friend_code);
   nwc24::NWC24iConvIDToStr(friend_code, reinterpret_cast<char *>(0x800017F0));
 }
-#if DOMINOS || EATER
 DEMAE_DEFINE_PATCH = {Patch::WriteFunctionCall(0x801baf64, DefaultIDCheck)};
-#endif
 } // namespace demae

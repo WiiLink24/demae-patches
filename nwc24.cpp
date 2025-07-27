@@ -21,7 +21,7 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
       *reinterpret_cast<u32 *>(0x8038a598));
 
   // Get the country string then copy the full string
-  char *msg_buffer = reinterpret_cast<char *>(cstdlib::malloc(160));
+  char *msg_buffer = static_cast<char *>(cstdlib::malloc(160));
   if (sc::GetCountry() == 18)
     cstdlib::sprintf(msg_buffer, msg, info_block->phone_number, "ca");
   else
@@ -32,7 +32,7 @@ int SetCustomMessageBoardText(void *ctx, const char *_msg, u32 msg_size,
   void *dst = cstdlib::malloc((size + 1) * 2);
   ShiftJISToUTF(dst, &size, msg_buffer, &size);
   // Null terminator
-  *(reinterpret_cast<wchar_t *>(dst) + size) = L'\0';
+  *(static_cast<wchar_t *>(dst) + size) = L'\0';
 
   return nwc24::NWC24SetMsgText(ctx, static_cast<const char *>(dst),
                                 (size + 1) * 2, one, two);

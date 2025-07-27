@@ -11,7 +11,7 @@ void LoadPersonalData(PersonalData *pd) {
   auto *info_block =
       reinterpret_cast<InfoBlock *>(*reinterpret_cast<u32 *>(0x8038a598));
 
-  char *buffer = reinterpret_cast<char *>(cstdlib::malloc(256));
+  char *buffer = static_cast<char *>(cstdlib::malloc(256));
   Utf16ToUtf8(buffer, 256, info_block->address, 256);
   MoveAddress(pd, buffer);
 

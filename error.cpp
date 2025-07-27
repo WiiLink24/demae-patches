@@ -88,11 +88,11 @@ void RenderCustomError(int *gx_obj, int err) {
     // Convert to UTF16
     void *dst = cstdlib::malloc((size + 1) * 2);
     ShiftJISToUTF(dst, &size, static_cast<char *>(txt), &size);
-    *(reinterpret_cast<u16 *>(dst) + size) = L'\0';
+    *(static_cast<u16 *>(dst) + size) = L'\0';
 
     // Now send to the renderer object
     RenderErrorBox(reinterpret_cast<int *>(gx_obj[0xa0]),
-                   reinterpret_cast<const wchar_t *>(dst), 0);
+                   static_cast<const wchar_t *>(dst), 0);
 
     // Clear the string so if another error occurs in which we don't send a
     // string, it will render what's in the DOL.

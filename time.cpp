@@ -1,7 +1,7 @@
 #include <patch.h>
 
 namespace demae::Time {
-    LONGCALL u64 OSGetTime(void) AT(0x801a3f70);
+    LONGCALL u64 OSGetTime() AT(0x801a3f70);
     LONGCALL void StoreTime(u32, u32, u32*) AT(0x801a41bc);
 
     void FixTime(u32, u32, u32* time_buf) {
