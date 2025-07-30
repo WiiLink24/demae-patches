@@ -55,6 +55,8 @@ DEMAE_DEFINE_PATCH = {
     Patch::WriteASM(0x8007b7c0, 1, ASM_LAMBDA(li r5, 0x0;)),
     Patch::WriteASM(0x8007b308, 1, ASM_LAMBDA(li r5, 0x0;)),
     Patch::WriteASM(0x8007b0e8, 1, ASM_LAMBDA(li r5, 0x0;)),
+    Patch::WriteASM(0x8007b580, 1, ASM_LAMBDA(li r5, 0x0;)),
+    Patch::WriteASM(0x8003f5a4, 1, ASM_LAMBDA(li r23, 0x0;)),
 
     // In their ever infinite wisdom, rather than using wsnprintf to format the address string, Nintendo
     // essentially made their own wscat which reads the PD file sequentially, copying every character into a buffer.
